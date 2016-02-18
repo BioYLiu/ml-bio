@@ -60,12 +60,37 @@ class Model(object):
                     # this is supposed to be the last line of our data
                     EOF = True
         self.model = data
-        """ def viterbi(x):
+
+
+    def hidden_states(self):
+        return self.model['hidden'].keys()
+
+    def emission(self, a, b):
+        """a is an index of a hidden state, b is an index of an emission"""
+        return self.model['emissions'][a][b]
+
+    def transition(self, a, b):
+        """a and b are indexes of hidden states"""
+        return self.model['transitions'][a][b]
+
+    def index_observable(self, a):
+        """returns the index in the model of a, when a is an observable """
+        return self.model['obbservable'][a]
+
+
+    def pi(self, a):
+        """a is a index of pi"""
+        return self.model['pi'][a]
+
+
+
+    def viterbi(x):
         #viterbi recursion. yay
         w = [0] * len(data['pi'])
-        print w"""
+        print w
         
         
+
     def __str__(self):
         """Prints the data"""
         # print the hidden states
