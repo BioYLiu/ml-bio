@@ -60,10 +60,10 @@ class Model(object):
                     # this is supposed to be the last line of our data
                     EOF = True
         self.model = data
-    def viterbi(x):
+        """ def viterbi(x):
         #viterbi recursion. yay
         w = [0] * len(data['pi'])
-        print w
+        print w"""
         
         
     def __str__(self):
