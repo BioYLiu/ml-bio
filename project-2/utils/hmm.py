@@ -47,6 +47,9 @@ class Model(object):
     def __str__(self):
         """Prints the data"""
         # print the hidden states
+        string = ''
         for key in self.keys:
-            print key
-            print self.data[key]
+            string += str(key) + '\n'
+            string += str(self.model[key]) + '\n'
+
+        return string
