@@ -75,9 +75,12 @@ class Model(object):
 
     def index_observable(self, a):
         """returns the index in the model of a, when a is an observable """
-        return self.model['obbservable'][a]
+        return self.model['observables'][a]
 
-
+    def index_hidden_state(self, a):
+        """returns the index in the model of a, when a is a hidden state"""
+        return self.model['hidden'][a]
+        
     def pi(self, a):
         """a is a index of pi"""
         return self.model['pi'][a]

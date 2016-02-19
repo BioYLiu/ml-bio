@@ -28,6 +28,12 @@ class Sequences:
         
     def __len__(self):
         return len(self.sequences)
+    
+    def get(self):
+        return self.sequences
+     
+    def get_by_key(self, key):
+        return self.sequences[key]
         
 if __name__ == "__main__":
     

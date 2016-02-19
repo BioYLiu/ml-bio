@@ -15,6 +15,7 @@ import math
 
 MODEL_NAME = 'test.hmm'
 SEQUENCES_NAME = 'sequences.txt'
+OUR_SEQUENCES_NAME = 'our_sequences.txt' #output from viterbi in project 2
 KEYS = ['hidden', 'observables', 'pi', 'transitions', 'emissions']
 
 
@@ -129,9 +130,10 @@ def show_results(data):
 if __name__ == "__main__":
     
     # loading the model
+    
     model = load_model(MODEL_NAME)
     # loading the sequence
-    sequences = load_sequences(SEQUENCES_NAME)
+    sequences = load_sequences(OUR_SEQUENCES_NAME)
 
     # computing the model
     results = {}

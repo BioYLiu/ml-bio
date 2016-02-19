@@ -1,0 +1,32 @@
+GRA1_HUMAN
+log P(x,z) =   -1317.33532415
+GAB1_HUMAN
+log P(x,z) =   -1374.79866719
+GAC1_RAT
+log P(x,z) =   -1362.18060624
+GAA1_CHICK
+log P(x,z) =   -1317.90283333
+HOXN_ALCEU
+log P(x,z) =   -1012.34809243
+GRB_RAT
+log P(x,z) =   -1437.19855436
+GAA4_BOVIN
+log P(x,z) =   -1611.39210592
+IMMA_CITFR
+log P(x,z) =   -508.382366231
+GAB_LYMST
+log P(x,z) =   -1444.34650809
+KDGL_ECOLI
+log P(x,z) =   -346.27997228
+GAR1_HUMAN
+log P(x,z) =   -1375.60267701
+GAR2_HUMAN
+log P(x,z) =   -1352.33676166
+RIB1_RAT
+log P(x,z) =   -1741.90688772
+FTSH_ECOLI
+log P(x,z) =   -1849.07336758
+RFBP_SALTY
+log P(x,z) =   -1401.56263179
+GAD_MOUSE
+log P(x,z) =   -1294.89002014
