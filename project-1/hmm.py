@@ -15,7 +15,8 @@ import math
 
 MODEL_NAME = 'test.hmm'
 SEQUENCES_NAME = 'sequences.txt'
-OUR_SEQUENCES_NAME = 'our_sequences.txt' #output from viterbi in project 2
+VITERBI_SEQUENCES_NAME = 'our_sequences.txt' #output from viterbi in project 2
+POSTERIOR_SEQUENCES_NAME = 'posterior-decoding-sequences.txt'
 KEYS = ['hidden', 'observables', 'pi', 'transitions', 'emissions']
 
 
@@ -133,12 +134,14 @@ if __name__ == "__main__":
     
     model = load_model(MODEL_NAME)
     # loading the sequence
-    sequences = load_sequences(OUR_SEQUENCES_NAME)
+    sequences = load_sequences(POSTERIOR_SEQUENCES_NAME)
 
     # computing the model
     results = {}
     for key in sequences.keys():
+        print key
         results[key] =  compute_hmm(model, sequences[key])[1]
+        print results[key]
 
 
 

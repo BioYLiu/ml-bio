@@ -8,6 +8,15 @@ def to_project_1_sequences_file(sequences, probs, filename):
             f.write("\n")
 
 
+def to_project_1_sequences_file_from_posterior_decoding(sequences, probs, filename):
+    with open(filename, 'w') as f:
+        for key, value in sequences.items():
+            f.write(">%s\n"%(key))
+            f.write("   %s\n"%(value))
+            f.write("# %s\n"%(probs[key]))
+            f.write("\n")
+
+
 def to_project_1_probs_file(sequences, probs, filename):
     with open(filename, 'w') as f:
         for key, value in sequences.items():

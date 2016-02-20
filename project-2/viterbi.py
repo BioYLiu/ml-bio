@@ -18,6 +18,7 @@ class Viterbi:
             self.w[k][0] = model.pi(k) + model.emission(k, model.index_observable(sequence[0]))
         
         # fills column by column, row by row
+        # starts b 1 because the first element of the input is the PI
         for n in range(1, X):
             for k in range(Z):
                 # for each cell in each column

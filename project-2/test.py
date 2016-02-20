@@ -19,10 +19,14 @@ vit = Viterbi()
 post = Posterior()
 
 probs = {}
-seq = 'MAKNLILWLVIAVVLMSVFQSFGPSESNGRKVDYSTFLQEVNNDQVREARINGREINVTKKDSNRYTTYI'
+seq = sequences.get()['FTSH_ECOLI']
 
-post.decode(model, seq)
+states = post.decode(model, seq)
 
+for key, value in sequences.get().items():
+    probs[key] = post.decode(model, value)
+
+outputs.to_project_1_sequences_file_from_posterior_decoding(sequences.get(), probs, 'posterior-decoding-sequences.txt')
 
 """
 for key, value in sequences.get().items():
