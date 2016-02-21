@@ -79,7 +79,10 @@ def load_sequences(filename):
             data[name] = dict(X=emissions, Z=hiddens, name=name)
     return data
 
-
+def elog(x):
+    if x == 0.0:
+        return -float('inf')
+    return math.log(x)
 
 
 def transition(a, b):
@@ -105,7 +108,8 @@ def compute_hmm(model, sequence):
     # first hidden and emission nodes
     S += math.log( emission(states_indexes[input_states[i]], observables_indexes[input_emissions[i]]) )
     for i in range(1, len(input_states)):
-        S += math.log( transition(states_indexes[input_states[i - 1]], states_indexes[input_states[i]]) )
+        ### patch project 2, avoiding logzero with -infintity
+        S += elog( transition(states_indexes[input_states[i - 1]], states_indexes[input_states[i]]) )
         S += math.log( emission(states_indexes[input_states[i]], observables_indexes[input_emissions[i]]) )
         
     return (sequence['name'], S)

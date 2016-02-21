@@ -35,11 +35,27 @@ class Posterior:
                 # checks if the state k emmitting the char of the sequence is higher than -infinity
                 
                 """ MAYBE change below (rest of method) to be more like pseudocode to remove potentiel errors  """
-                
+                logsum = -float('inf')
                 if model.emission(k, model.index_observable(sequence[n])) != -float('inf'):
                     # performs for each state
+
+                    ### moving to a similar pseudocode
+
                     for j in range(Z):
                         # if exists the transition from j to k
+                        if model.transition(j, k) != -float('inf'):
+                            logsum = self.__logsum__(
+                                                    logsum,
+                                                    self.alpha[j][n-1] + model.transition(j, k)
+                                                )
+                    if logsum != -float('inf'):
+                        logsum += model.emission(k, model.index_observable(sequence[n]))
+
+                self.alpha[k][n] = logsum
+
+                """
+                if model.emission(k, model.index_observable(sequence[n])) != -float('inf'):
+                    for j in range(Z):
                         if model.transition(j, k) != -float('inf'):
                             # computes the log_sum of the current cell and the previous state +  the transition from
                             # state j to state k
@@ -54,7 +70,7 @@ class Posterior:
                     # of the emission, if it was -inf we couldn't add anything
                     if self.alpha[k][n] != -float('inf'):
                         self.alpha[k][n] += model.emission(k, model.index_observable(sequence[n])) 
-                  
+                  """
                         
     def __beta_recursion__(self, model, sequence):
         
@@ -103,10 +119,10 @@ class Posterior:
             px = self.__logsum__(px, self.alpha[l][-1])
         """    
         
-        for l in range (0, X):
+        for l in range (X):
             state = None
             bsf = -float('inf') #best so far
-            for k in range(0, Z):
+            for k in range(Z):
                 contestor = self.alpha[k][l] + self.beta[k][l]
                 if (contestor > bsf):
                     bsf = contestor
