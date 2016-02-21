@@ -33,6 +33,9 @@ class Posterior:
             for k in range(Z):
                 # for each cell in each column
                 # checks if the state k emmitting the char of the sequence is higher than -infinity
+                
+                """ MAYBE change below (rest of method) to be more like pseudocode to remove potentiel errors  """
+                
                 if model.emission(k, model.index_observable(sequence[n])) != -float('inf'):
                     # performs for each state
                     for j in range(Z):
