@@ -10,7 +10,7 @@ def dict_with_indexes(l):
     return { l[i]: i for i in range(len(l)) }
 
 def zerolog(f):
-    if (f==0):
+    if (f==0.0):
         return -float('inf')
     return math.log(f)
 

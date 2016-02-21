@@ -46,7 +46,7 @@ class Posterior:
                         if model.transition(j, k) != -float('inf'):
                             logsum = self.__logsum__(
                                                     logsum,
-                                                    self.alpha[j][n-1] + model.transition(j, k)
+                                                    self.alpha[j][n - 1] + model.transition(j, k)
                                                 )
                     if logsum != -float('inf'):
                         logsum += model.emission(k, model.index_observable(sequence[n]))
@@ -81,7 +81,7 @@ class Posterior:
 
         # fills the last column with 1
         for k in range(Z): # where k is the index of each state
-            self.beta[k][X-1] = 0
+            self.beta[k][-1] = 0
 
         # fills column by column, row by row
         for n in range(X-2, -1, -1):
@@ -110,8 +110,9 @@ class Posterior:
         self.z = [None] * X
         self.__alpha_recursion__(model, sequence)
         self.__beta_recursion__(model, sequence)
-        
-        px = reduce( self.__logsum__, [ self.alpha[x][-1] for x in range(0, Z) ], -float('inf') )
+        #print self.alpha
+        #print self.beta
+        px = reduce( self.__logsum__, [ self.alpha[x][-1] for x in range(Z) ], -float('inf') )
         """
         
         px = -float('inf')
@@ -131,5 +132,4 @@ class Posterior:
             self.z[l] = state
             
         self.z =  ''.join(self.z)
-        
         return self.z
