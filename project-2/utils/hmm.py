@@ -87,12 +87,7 @@ class Model(object):
 
 
 
-    def viterbi(x):
-        #viterbi recursion. yay
-        w = [0] * len(data['pi'])
-        print w
-        
-        
+   
 
     def __str__(self):
         """Prints the data"""

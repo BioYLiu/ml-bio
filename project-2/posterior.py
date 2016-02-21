@@ -81,17 +81,22 @@ class Posterior:
 
         # fills the last column with 1
         for k in range(Z): # where k is the index of each state
-            self.beta[k][-1] = 0
-
+            self.beta[k][-1] = 0.0
+        
+        
         # fills column by column, row by row
         for n in range(X-2, -1, -1):
             for k in range(Z):
+                
+                lsum = -float('inf')
                 for j in range(Z):
-                    # if exists the transition from j to k
+                    """
                     if model.transition(k, j) != -float('inf'):
                        # gets the maximum value between the current value in w[k][n]
                        # the state k emmitting the char of the sequence plus
                         # the value in w[k][n-1] plus the transition from j to k
+                        
+                        
                         
                         
                         self.beta[k][n] = self.__logsum__( 
@@ -100,8 +105,23 @@ class Posterior:
                                             + model.transition(k, j)
                                             + model.emission(j, model.index_observable(sequence[n + 1])) 
                                         )
-
-    
+                    """
+                    
+                    
+                    #more foolproof version attempt (wait thats more or less the same)
+                    
+                    lsum = self.__logsum__(lsum, self.beta[j][n+1]+
+                                            model.emission(j, model.index_observable(sequence[n+1]))+
+                                            model.transition(k,j))
+                    
+                self.beta[k][n] = lsum      
+                
+                
+            
+                                            
+                    
+                    
+                    
     def decode(self, model, sequence):
         
         X = len(sequence)
