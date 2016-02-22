@@ -63,3 +63,6 @@ target/
 
 # idea
 .idea
+
+#old projects folders
+*project-1/
