@@ -36,12 +36,13 @@ def to_project_2_viterbi(sequences, probs, filename,  key_order = None):
         f.write("\n")
 
         for key in keys:
-            f.write(">%s\n"%(key))
-            f.write("%s\n"%(sequences[key]))
-            f.write("#\n")
-            f.write("%s\n"%(probs[key][1]))
-            f.write("; log P(x,z) =   %s\n"%(probs[key][0]))
-            f.write("\n")
+            if key in sequences:
+                f.write(">%s\n"%(key))
+                f.write("%s\n"%(sequences[key]))
+                f.write("#\n")
+                f.write("%s\n"%(probs[key][1]))
+                f.write("; log P(x,z) =   %s\n"%(probs[key][0]))
+                f.write("\n")
 
 def to_project_2_posterior(sequences, probs, filename, key_order = None):
 
@@ -54,8 +55,10 @@ def to_project_2_posterior(sequences, probs, filename, key_order = None):
         f.write("; Posterior-decodings of sequences-project2.txt using HMM hmm-tm.txt by Martin and Juan\n")
         f.write("\n")
         for key in keys:
-            f.write(">%s\n"%(key))
-            f.write("%s\n"%(sequences[key]))
-            f.write("# %s\n"%(probs[key]))
-            f.write("; log P(x,z) = ---\n")
-            f.write("\n")
+            if key in sequences:
+                f.write(">%s\n"%(key))
+                f.write("%s\n"%(sequences[key]))
+                f.write("#\n")
+                f.write("%s\n"%(probs[key][1]))
+                f.write("; log P(x,z) = %s\n"%(probs[key][0]))
+                f.write("\n")

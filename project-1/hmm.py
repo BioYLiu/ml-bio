@@ -18,6 +18,7 @@ SEQUENCES_NAME = 'sequences.txt'
 VITERBI_SEQUENCES_NAME = 'our_sequences.txt' #output from viterbi in project 2
 POSTERIOR_SEQUENCES_NAME = 'posterior-decoding-sequences.txt'
 KEYS = ['hidden', 'observables', 'pi', 'transitions', 'emissions']
+"""
 OUTPUT_FILE_ORDER_KEYS = [
     'FTSH_ECOLI',
     'GAA1_CHICK',
@@ -36,7 +37,7 @@ OUTPUT_FILE_ORDER_KEYS = [
     'RFBP_SALTY',
     'RIB1_RAT'
 ]
-
+"""
 
 def split_line(l, t=str, c=' '):
     """Returns an array of values from a line"""
@@ -160,7 +161,7 @@ if __name__ == "__main__":
 
     # computing the model
     results = {}
-    for key in OUTPUT_FILE_ORDER_KEYS:
+    for key in sequences.keys():
         print key
         results[key] =  compute_hmm(model, sequences[key])[1]
         print results[key]
