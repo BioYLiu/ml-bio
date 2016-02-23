@@ -5,11 +5,13 @@ from utils import outputs
 from utils import compute_hmm
 
 HMMFILE = 'hmm-tm.txt'
+
+#SEQUENCEFILE = 'test-sequences-project2.txt'
 SEQUENCEFILE = 'test-sequences-project2.txt'
 KEYS = ['hidden', 'observables', 'pi', 'transitions', 'emissions']
 
 
-
+"""
 
 
 #seq = sequences.get()['FTSH_ECOLI']
@@ -19,11 +21,6 @@ KEYS = ['hidden', 'observables', 'pi', 'transitions', 'emissions']
 
 
 #outputs.to_project_1_sequences_file_from_posterior_decoding(sequences.get(), probs, 'posterior-decoding-sequences.txt')
-#
-
-"""
-
-
 
 outputs.to_project_1_sequences_file(sequences.get(), probs, 'viterbi-sequences.txt')
 outputs.to_project_1_probs_file(sequences.get(), probs, 'viterbi-probs.txt')
@@ -34,7 +31,6 @@ if __name__ == '__main__':
     model = hmm.Model(KEYS)
     model.load(HMMFILE)
     sequences = sequences.Sequences(SEQUENCEFILE)
-
     # load methods
     vit = Viterbi()
     post = Posterior()
@@ -57,7 +53,7 @@ if __name__ == '__main__':
 
         probs[key] = ( log_joint, sequence['Z'])
 
-
+    #outputs.to_project_2_posterior(sequences.get(), probs, 'posterior-output.txt')
     outputs.to_project_2_posterior(sequences.get(), probs, 'pred-test-sequences-project2-posterior.txt')
     # testing
     #probs = { key: value[1] for key, value in probs.items() }

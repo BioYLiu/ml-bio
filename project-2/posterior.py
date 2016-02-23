@@ -60,15 +60,18 @@ class Posterior:
 
         # fills the last column with 1
         for k in range(Z): # where k is the index of each state
-            self.beta[k][-1] = 0.0
+            self.beta[k][-1] = 0.0 ##log of 1
 
         # fills column by column, row by row
         for n in range(X-2, -1, -1):
             for k in range(Z):
                 
-                logsum = -float('inf')
+                logsum = -float('inf') #Freshly created variable, log of 0
+                
                 for j in range(Z):
-                    logsum = self.__logsum__(
+                    # the missing if statement
+                    if model.transition(k, j) != -float('inf'):
+                        logsum = self.__logsum__(
                                             logsum,
                                             self.beta[j][n + 1] +
                                             model.emission(j, model.index_observable(sequence[n + 1])) +
@@ -83,27 +86,12 @@ class Posterior:
         X = len(sequence)
         Z = len(model.hidden_states())
         states = model.hidden_states()
-
         self.__alpha_recursion__(model, sequence)
         self.__beta_recursion__(model, sequence)
 
-        """
-        self.z = [None] * X
-        for l in range (X):
-            state = None
-            bsf = -float('inf') #best so far
-            for k in range(Z):
-                contestor = self.alpha[k][l] + self.beta[k][l]
-                if (contestor > bsf):
-                    bsf = contestor
-                    state = states[k]
-            
-            self.z[l] = state
-        """
-        ## foolchecks, surprisingly, these 2 lines below do the same as the above for in range(X)
+        
         states = np.array(states)
         self.z = states[ np.argmax(self.alpha + self.beta, axis=0) ]
 
         self.z = ''.join(self.z)
-
         return self.z
