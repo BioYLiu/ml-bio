@@ -13,9 +13,9 @@ class Posterior:
         if log_y == -float('inf'): return log_x
         
         if log_x > log_y:
-            return log_x + math.log( 1 + 2 ** (log_y - log_x))
+            return log_x + math.log( 1 + math.exp(log_y - log_x))
         else:
-            return log_y + math.log( 1 + 2 ** (log_x - log_y))
+            return log_y + math.log( 1 + math.exp(log_x - log_y))
 
         
     def __alpha_recursion__(self, model, sequence):
@@ -60,7 +60,7 @@ class Posterior:
 
         # fills the last column with 1
         for k in range(Z): # where k is the index of each state
-            self.beta[k][-1] = 0.0 ##log of 1
+            self.beta[k][-1] = 0.0 
 
         # fills column by column, row by row
         for n in range(X-2, -1, -1):
@@ -88,7 +88,6 @@ class Posterior:
         states = model.hidden_states()
         self.__alpha_recursion__(model, sequence)
         self.__beta_recursion__(model, sequence)
-
         
         states = np.array(states)
         self.z = states[ np.argmax(self.alpha + self.beta, axis=0) ]

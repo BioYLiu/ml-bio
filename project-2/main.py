@@ -6,8 +6,9 @@ from utils import compute_hmm
 
 HMMFILE = 'hmm-tm.txt'
 
-#SEQUENCEFILE = 'test-sequences-project2.txt'
 SEQUENCEFILE = 'test-sequences-project2.txt'
+#SEQUENCEFILE = '../../sequences-project2.txt' #Two folders up!!! :-P #nice
+
 KEYS = ['hidden', 'observables', 'pi', 'transitions', 'emissions']
 
 
@@ -34,6 +35,8 @@ if __name__ == '__main__':
     # load methods
     vit = Viterbi()
     post = Posterior()
+    
+    
 
     # viterbi
     probs = {}
@@ -41,7 +44,6 @@ if __name__ == '__main__':
         probs[key] = vit.decode(model, sequence)
 
     outputs.to_project_2_viterbi(sequences.get(), probs, 'pred-test-sequences-project2-viterbi.txt')
-
 
     probs = {}
     for key, value in sequences.get().items():
@@ -54,7 +56,7 @@ if __name__ == '__main__':
         probs[key] = ( log_joint, sequence['Z'])
 
     #outputs.to_project_2_posterior(sequences.get(), probs, 'posterior-output.txt')
-    outputs.to_project_2_posterior(sequences.get(), probs, 'pred-test-sequences-project2-posterior.txt')
+    #outputs.to_project_2_posterior(sequences.get(), probs, 'pred-test-sequences-project2-posterior.txt')
     # testing
     #probs = { key: value[1] for key, value in probs.items() }
     #outputs.to_project_1_sequences_file_from_posterior_decoding(sequences.get(), probs, 'posterior-decoding-sequences.txt')
