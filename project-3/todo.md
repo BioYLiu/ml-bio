@@ -1,7 +1,7 @@
 Project 3 TODO
 ==============
 
-* Mandatory
+  * Mandatory
 
     *[ ] 1 Train the 3-state model (from class) on parts 0-8 of the training data using training-by-counting.
     Show the obtained model parameters (transition, emission, and start probilities).
@@ -21,7 +21,7 @@ Project 3 TODO
     *[ ] 6 Redo steps 3-5 for any other models that you find relevant, e.g. the ones we talked about in class. What is the
     best AC (i.e. best mean over a 10-fold experiment) that you can obtain? How does your best model look like?
 
-* Optional
+  * Optional
 
     *[ ] 7 Redo steps 3-6 using Viterbi-training instead of training-by-counting (i.e. you ignore the annotations in the
     training data.)
