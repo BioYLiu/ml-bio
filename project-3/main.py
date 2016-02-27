@@ -1,11 +1,12 @@
 from utils import hmm, sequences
+import os
 from viterbi import Viterbi
 from posterior import Posterior
 from utils import outputs
 from utils import compute_hmm
 from utils.sequences import Sequences
 
-DATAFOLDER = "Training data/"
+DATAFOLDER = "Training data"
 
 KEYS = ['hidden', 'observables', 'pi', 'transitions', 'emissions']
 
@@ -18,7 +19,9 @@ if __name__ == '__main__':
     step1data = {}
     
     for i in range(9):
-        seq_i = sequences.Sequences(DATAFOLDER+"set160.%d.labels.txt"%i).sequences
+        #avoid problems with windows paths
+        path = os.path.join(DATAFOLDER, "set160.%d.labels.txt"%i ) 
+        seq_i = sequences.Sequences(path).sequences
         step1data.update(seq_i)
         
     #model.train_by_counting(step1data)

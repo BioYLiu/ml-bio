@@ -37,6 +37,7 @@ class Model(object):
                 if c not in modelparams[0]:
                     modelparams[0][c] = hiddencount #hidden
                     hiddencount+=1
+            
                 
             ##obs
             obscount = 0
