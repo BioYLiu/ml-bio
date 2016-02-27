@@ -24,12 +24,17 @@ if __name__ == '__main__':
         seq_i = sequences.Sequences(path).sequences
         step1data.update(seq_i)
         
-    #model.train_by_counting(step1data)
+    model.train_by_counting_old(step1data)
+    print model
+
+    model.train_by_counting(step1data)
+    print model
     
     ###STEP2###
     
     step2data = step1data
-    
+
+    model.train_by_counting_4_states(step2data)
     ###########
     print model
     

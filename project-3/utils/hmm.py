@@ -18,12 +18,18 @@ def zerolog(f):
 class Model(object):
 
     def __init__(self, keys):
-        self.keys = keys;
+        self.keys = keys
         self.model = ''
         
    
-    
-    def train_by_counting(self, data): #Version number indexes instead
+    # I keep it to test the results
+    def train_by_counting_old(self, data):
+        """
+        Computes training by counting for 3 states i M o
+        :param data: a dictionary of sequences
+        :return:
+        """
+        #Version number indexes instead
         modelparams = {} ##all parameters: hiddens, obs, pi, trans, emis
         for i in  range( len(self.keys) ):
             modelparams[i] = {}
@@ -85,12 +91,133 @@ class Model(object):
             modelparams[4][v] /= np.sum(modelparams[4][v])
         
         self.model = modelparams
+
+    def train_by_counting(self, data):
+        """
+        Computes training by counting for 3 states i M o
+        :param data: a dictionary of sequences
+        :return:
+        """
+        self.model = {x:{} for x in self.keys} ##all parameters: hiddens, obs, pi, trans, emissions
+
+        # modified the first part because for each sequence
+        # it's possible that not all the states are visited
+        # and the same for the observables
+        for name in data:
+            hiddens = list(data[name]['Z'])
+            observables = list(data[name]['X'])
+
+            # getting all the different hiddens of each sequence
+            # gets the different hiddens for this sequence, and its sums
+            sub_hiddens = np.unique(hiddens, False) # return the uniques, and it sums
+            sub_observables = np.unique(observables, False)
+
+            # updating the indexes for each state
+            # caution!, not all states are visited in each sequence
+            for i in range(len(sub_hiddens)):
+                hidd = sub_hiddens[i]
+                # get returns the second parameter if the key doesn't exists
+                # so we add a new key with its new index
+                self.model['hidden'][hidd] = self.model['hidden'].get(hidd, len(self.model['hidden']))
+
+            for i in range(len(sub_observables)):
+                sub = sub_observables[i]
+                # get returns the second parameter if the key doesn't exists
+                # so we add a new key with its new index
+                self.model['observables'][sub] = self.model['observables'].get(sub, len(self.model['observables']))
+
+        ### At this step  we have all the different 4 states with its index in self.model['hidden'] and
+        ### all the different observables with its index in self.model['observables']
+
+
+        ##make last dicts
+        Z = len(self.model['hidden'])
+        X = len(self.model['observables'])
+        self.model['pi'] = [0] * Z
+        self.model['transitions'] = np.zeros(shape=(Z,Z))
+        self.model['emissions'] = np.zeros(shape=(Z,X))
+
+        # let's count!
+        for name in data:
+            hiddens = np.array(list(data[name]['Z']))
+            observables = np.array(list(data[name]['X']))
+            #count pi
+            ### Fair to assume that pi[1] is 0 probably? As sequence wont begin in membrane
+            self.model['pi'][self.index_hidden_state(hiddens[0])] += 1
+
+
+            #count transmissions
+
+            for z in range(len(hiddens) - 1):
+                # from hidden f to hidden t
+                f, t = self.index_hidden_state(hiddens[z]), self.index_hidden_state(hiddens[z + 1])
+                self.model['transitions'][f][t] += 1
+
+            #count emissions
+            for z in range(len(observables)):
+                # from hidden h to observable o
+                h, o =  self.index_hidden_state(hiddens[z]), self.index_observable(observables[z])
+                self.model['emissions'][h][o] += 1
+
+        # normalizing PI
+        self.model['pi'] = np.array(self.model['pi']) / float(len(data))
+
+        # normalizing transitions row by row
+        for v in range(Z):
+            self.model['transitions'][v] /= np.sum(self.model['transitions'][v])
+
+        #normalizing emissions row by row
+        for v in range (Z):
+            self.model['emissions'][v] /= np.sum(self.model['emissions'][v])
+
         
         
-        
-        
-        
-    
+    def train_by_counting_4_states(self, data):
+        """
+        Computes training by counting with 4 states
+        i, iMo, oMi, o
+        uses self.train_by_counting
+        :param data: a dict with the sequences
+        :return:
+        """
+        for name in data:
+            hiddens = list(data[name]['Z'])
+            # modifying the hiddens to be 4 instead of 3
+            # this step will only be done the first iteration
+            for x in range(1, len(hiddens)):
+                ## from inside to the membrane
+                if hiddens[x - 1] == 'i' and hiddens[x] =='M':
+                    hiddens[x] = 'iMo'
+                ## from inside  still in  the membrane
+                elif hiddens[x - 1] == 'iMo' and hiddens[x] =='M':
+                    hiddens[x] = 'iMo'
+                ## from outside to the membrane
+                elif hiddens[x - 1] == 'o' and hiddens[x] =='M':
+                    hiddens[x] = 'oMi'
+                ## from outside still in  the membrane
+                elif hiddens[x - 1] == 'oMi' and hiddens[x] =='M':
+                    hiddens[x] = 'oMi'
+
+                """
+                ##### Already checked, nothing wrong, uncomment to check again
+                ## from the oMi to outside shouldn't be possible
+                ## just checking
+                elif hiddens[x - 1] == 'oMi' and hiddens[x] =='o':
+                    print "from oMi  to outside"
+
+                ## from the iMo to inside shouldn't be possible
+                ## just checking
+                elif hiddens[x - 1] == 'iMo' and hiddens[x] =='i':
+                    print "from iMo to inside"
+                """
+
+            # updating the input sequence to match the new states
+            data[name]['Z'] = hiddens[:]
+            ### At this step  we have each hidden sequences adapted with the new states
+            ### so, why not use our first implementation to do the rest of the work??
+        self.train_by_counting(data)
+
+
     def hidden_states(self):
         return self.model['hidden'].keys()
 
@@ -120,10 +247,16 @@ class Model(object):
 
     def __str__(self):
         """Prints the data"""
-        # print the hidden states
         string = ''
-        for i in range(len(self.keys)):
-            string += str(self.keys[i]) + '\n'
-            string += str(self.model[i]) + '\n'
+        if type(self.model.keys()[0]) != str:
+            for i in range(len(self.keys)):
+                string += str(self.keys[i]) + '\n'
+                string += str(self.model[i]) + '\n'
+        else:
+            for key in self.keys:
+                string += key + '\n'
+                string += str(self.model[key]) + '\n'
+
+
 
         return string

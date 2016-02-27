@@ -6,7 +6,7 @@ Project 3 TODO
 *  [X] 1 Train the 3-state model (from class) on parts 0-8 of the training data using training-by-counting.
     Show the obtained model parameters (transition, emission, and start probilities).
 
-*  [ ] 2 Redo step 1 with the 4-state model (from class). Recall that for this model, the given annotations does
+*  [X] 2 Redo step 1 with the 4-state model (from class). Recall that for this model, the given annotations does
     not correspond immediately to sequences of hidden states, as there are two states that we interpret as being in
     transmembrane helix (annotation M).
 
