@@ -2,6 +2,7 @@ Project 3 TODO
 ==============
 
 * Mandatory
+
     *[ ] 1 Train the 3-state model (from class) on parts 0-8 of the training data using training-by-counting.
     Show the obtained model parameters (transition, emission, and start probilities).
 
