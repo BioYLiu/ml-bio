@@ -109,7 +109,7 @@ class Model(object):
 
             # getting all the different hiddens of each sequence
             # gets the different hiddens for this sequence, and its sums
-            sub_hiddens = np.unique(hiddens, False) # return the uniques, and it sums
+            sub_hiddens = np.unique(hiddens, False) # return the uniques
             sub_observables = np.unique(observables, False)
 
             # updating the indexes for each state
