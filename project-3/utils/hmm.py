@@ -118,6 +118,7 @@ class Model(object):
                 hidd = sub_hiddens[i]
                 # get returns the second parameter if the key doesn't exists
                 # so we add a new key with its new index
+                # same as->  if hidd not in self.model['hidden]: self.model['hidden][hidd] = len(self.model['hidden']])
                 self.model['hidden'][hidd] = self.model['hidden'].get(hidd, len(self.model['hidden']))
 
             for i in range(len(sub_observables)):
@@ -183,7 +184,6 @@ class Model(object):
         for name in data:
             hiddens = list(data[name]['Z'])
             # modifying the hiddens to be 4 instead of 3
-            # this step will only be done the first iteration
             for x in range(1, len(hiddens)):
                 ## from inside to the membrane
                 if hiddens[x - 1] == 'i' and hiddens[x] =='M':
