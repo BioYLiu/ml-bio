@@ -27,7 +27,7 @@ def load_sequences():
 
     return sequences_dict
 
-def load_sequences_for_step_3():
+def load_sequences_as_array():
     """
     Load all the sequences in file DATAFOLDER
     :return: An array with a dict of sequences in each index
@@ -76,13 +76,11 @@ def cross_validation(sequences, training_method):
 
         #do viterbi prediction on set i
         for key, sequence in validation_data.items():
-
-            tp, fp, tn, fn = compare_tm_pred.count(
-                            # the sequence from the file
-                            sequence['Z'],
-                            # the secuence decoded using viterbi and the model generated
-                            vit.decode(model, sequence['X'])[1]
-                         )
+            # the sequence from the file
+            true_seq = sequence['Z']
+            # the secuence decoded using viterbi and the model generated
+            pred_seq = vit.decode(model, sequence['X'])[1]
+            tp, fp, tn, fn = compare_tm_pred.count(true_seq, pred_seq)
 
             total_scores += np.array([tp, fp, tn, fn])
 
@@ -117,9 +115,13 @@ if __name__ == '__main__':
 
     ###STEP3###
     model = hmm.Model(KEYS)
-    step_3_sequences = load_sequences_for_step_3()
+    step_3_sequences = load_sequences_as_array()
     cross_validation(step_3_sequences, model.train_by_counting)
 
+    ###STEP4###
+#    model = hmm.Model(KEYS)
+#    step_4_sequences = load_sequences_as_array()
+#    cross_validation(step_4_sequences, model.train_by_counting_4_states)
 
 
 """
