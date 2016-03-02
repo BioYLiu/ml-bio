@@ -1,43 +1,129 @@
-from utils import hmm, sequences
+from utils import hmm
+from utils import sequences as sequences_loader
+from utils import merge_array_of_sequences as merge
 import os, math
 from viterbi import Viterbi
 from posterior import Posterior
-from utils import outputs
-from utils import compute_hmm
+import numpy as np
 from utils import compare_tm_pred
-from utils.sequences import Sequences
 
 DATAFOLDER = "Training data"
 
 KEYS = ['hidden', 'observables', 'pi', 'transitions', 'emissions']
+DEBUG = False
+VERBOSE = True
+
+def load_sequences():
+    """
+    Load all the sequences in file DATAFOLDER
+    :return: A dictionary with all the sequences
+    """
+    sequences_dict = {}
+    for i in range(9):
+        #avoid problems with windows paths
+        path = os.path.join(DATAFOLDER, "set160.%d.labels.txt"%i )
+        seq_i = sequences_loader.Sequences(path).sequences
+        sequences_dict.update(seq_i)
+
+    return sequences_dict
+
+def load_sequences_for_step_3():
+    """
+    Load all the sequences in file DATAFOLDER
+    :return: An array with a dict of sequences in each index
+    """
+    sequences_array = []
+    for i in range(9):
+        #avoid problems with windows paths
+        path = os.path.join(DATAFOLDER, "set160.%d.labels.txt" % i)
+        seq_i = sequences_loader.Sequences(path).sequences
+        sequences_array.append(seq_i)
+
+    return sequences_array
+
+def step_1(data):
+    model = hmm.Model(KEYS)
+    #model.train_by_counting_old(data)
+    model.train_by_counting_old(data)
+    return model
+
+def step_2(data):
+    model = hmm.Model(KEYS)
+    model.train_by_counting_4_states(data)
+    return model
+
+
+def cross_validation(sequences, training_method):
+    """
+    Performs the 10-fold cross-validatino
+    Requieres an array of dict sequences
+    Requires the training function
+    """
+
+    vit = Viterbi()
+
+    for i in range(len(sequences)):
+        total_scores = np.zeros([4])
+        # arrays with the sequences for training and for validation
+        training_data_array = sequences[:]
+        validation_data_array = [ training_data_array.pop(i) ]
+
+        # merging the arrays into dictionaries
+        training_data = merge(training_data_array)
+        validation_data = merge(validation_data_array)
+        # the training function returns a model
+        model = training_method(training_data)
+
+        #do viterbi prediction on set i
+        for key, sequence in validation_data.items():
+
+            tp, fp, tn, fn = compare_tm_pred.count(
+                            # the sequence from the file
+                            sequence['Z'],
+                            # the secuence decoded using viterbi and the model generated
+                            vit.decode(model, sequence['X'])[1]
+                         )
+
+            total_scores += np.array([tp, fp, tn, fn])
+
+            if VERBOSE:
+                print ">" + key
+                compare_tm_pred.print_stats(tp, fp, tn, fn)
+                print
+
+        print "Summary 10-fold cross validation over index %i :"%(i)
+        compare_tm_pred.print_stats( *total_scores  )
+        print
+        print
+        print
+        print "-------------------------------------------------------"
+        if DEBUG:
+            raw_input("press any key to continue\n")
 
 
 if __name__ == '__main__':
-    model = hmm.Model(KEYS)
-    """
+
+
     ###STEP1###
-    
-    step1data = {}
-    
-    for i in range(9):
-        #avoid problems with windows paths
-        path = os.path.join(DATAFOLDER, "set160.%d.labels.txt"%i ) 
-        seq_i = sequences.Sequences(path).sequences
-        step1data.update(seq_i)
-        
-    model.train_by_counting_old(step1data)
-    print model
+    # load the sequences ,  performs the training by counting and returns the model generated
+##    step_1_sequences = load_sequences()
+##    step_1_model = step_1(step_1_sequences)
 
-    model.train_by_counting(step1data)
-    print model
-    
     ###STEP2###
-    
-    step2data = step1data
+    # load the sequences ,  performs the training by counting and returns the model generated
+##    step_2_sequences = load_sequences()
+##    step_2_model = step_2(step_2_sequences)
 
-    model.train_by_counting_4_states(step2data)
-    print model
-    """
+
+    ###STEP3###
+    model = hmm.Model(KEYS)
+    step_3_sequences = load_sequences_for_step_3()
+    cross_validation(step_3_sequences, model.train_by_counting)
+
+
+
+"""
+
     ###step3###
     vit = Viterbi()
     scores = [0] * 10
@@ -45,13 +131,13 @@ if __name__ == '__main__':
     for i in range(10):
         step3data_train = {} ##reset data each time. If there is a way to update the old one it is likely bettter
         step3data_validate = {}
-        step3data_validate = sequences.Sequences(os.path.join(DATAFOLDER, "set160.%d.labels.txt"%i))
+        step3data_validate = sequences_loader.Sequences(os.path.join(DATAFOLDER, "set160.%d.labels.txt"%i))
         
         #train on all other than i
         for j in range(10):
             if (j!=i):
                 path = os.path.join(DATAFOLDER, "set160.%d.labels.txt"%j ) 
-                seq = sequences.Sequences(path).sequences
+                seq = sequences_loader.Sequences(path).sequences
                 step3data_train.update(seq)
                 
         model.train_by_counting(step3data_train)
@@ -80,7 +166,7 @@ if __name__ == '__main__':
    # vit = Viterbi()
     #post = Posterior()
     
-    """
+
 
     # viterbi
     probs = {}

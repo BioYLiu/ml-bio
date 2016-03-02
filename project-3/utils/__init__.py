@@ -26,3 +26,8 @@ def compute_hmm(model, sequence):
             )
 
     return S
+
+
+def merge_array_of_sequences(data):
+    """Returns a dictionary from an array of dictionaries"""
+    return { index:value for inner_dict in data for index, value in inner_dict.items() }

@@ -59,9 +59,9 @@ class Model(object):
         self.model = data
         
         
-    def __init__(self, keys):
+    def __init__(self, keys, base_model=None):
         self.keys = keys
-        self.model = ''
+        self.model = base_model or ''
         
    
     # I keep it to test the results
@@ -218,6 +218,9 @@ class Model(object):
             self.model['emissions'][v] /= np.sum(self.model['emissions'][v])
             self.model['emissions'][v] =  map(lambda x:zerolog(x),self.model['emissions'][v])
 
+        ## now the function returns a model!!
+        return Model(self.keys, self.model)
+
         
         
     def train_by_counting_4_states(self, data):
@@ -262,7 +265,7 @@ class Model(object):
             data[name]['Z'] = hiddens[:]
             ### At this step  we have each hidden sequences adapted with the new states
             ### so, why not use our first implementation to do the rest of the work??
-        self.train_by_counting(data)
+        return self.train_by_counting(data)
 
 
     def hidden_states(self):
