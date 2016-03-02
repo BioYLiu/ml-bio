@@ -61,7 +61,6 @@ class Viterbi:
                                 + self.w[k][n]
                                 + model.transition(k, model.index_hidden_state(self.z[n+1] ) )
                             )
-            
             self.z[n] = hidden_states[np.argmax(indexes)]
             
             # converts the array of chars to a string
@@ -73,3 +72,5 @@ class Viterbi:
         self.__bactracking__(model, sequence)
 
         return ( np.max(self.w, axis=0)[-1], self.z )
+        
+        

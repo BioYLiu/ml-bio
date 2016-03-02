@@ -62,3 +62,4 @@ def to_project_2_posterior(sequences, probs, filename, key_order = None):
                 f.write("%s\n"%(probs[key][1]))
                 f.write("; log P(x,z) = %s\n"%(probs[key][0]))
                 f.write("\n")
+                

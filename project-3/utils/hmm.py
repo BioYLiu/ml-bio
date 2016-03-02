@@ -17,6 +17,48 @@ def zerolog(f):
 
 class Model(object):
 
+    def load(self, filename): ##REMOVE THIS
+        """Loads the data and returns a dictionary with some kind of helpful structure"""
+        data = {}
+        # just fetch the lines which are not empty
+        with open(filename, 'r') as f:
+            EOF = False
+            while not EOF:
+                l = f.readline().strip('\n')
+                if l == self.keys[0]: #'hidden'
+                    # one line
+                    # format {'i':0, ...}
+                    data[self.keys[0]] = dict_with_indexes( split_line(f.readline().strip('\n')) )
+                elif l == self.keys[1]: #'observables'
+                    # one line
+                    # format {'a':0,...}
+                    data[self.keys[1]] = dict_with_indexes( split_line(f.readline().strip('\n')) )
+                elif l == self.keys[2]: #'pi'
+                    # one line
+                    # format [0.3, ...]
+                    #a =  split_line(f.readline().strip('\n'), t=float) 
+                    #print type(a[0])
+                    data[self.keys[2]] = map(lambda x:zerolog(x), split_line(f.readline().strip('\n'), t=float) )
+                    
+                elif l == self.keys[3]: #'transitions'
+                    # multiple lines
+                    #format [[0.2,..], [...]]
+                    data[self.keys[3]] =   [ split_line(f.readline().strip('\n'), t=float) for x in range(len(data[self.keys[0]].keys())) ]
+                    for y in range(len(data[self.keys[0]].keys())):
+                        data[self.keys[3]][y] = map(lambda x:zerolog(x),data[self.keys[3]][y])
+                    
+                elif l == self.keys[4]: #'emissions'
+                    # multiple lines
+                    #format [[0.2,..], [...]]
+                    data[self.keys[4]] = [ split_line(f.readline().strip('\n'), t=float) for x in range(len(data[self.keys[0]].keys())) ]
+                    for y in range(len(data[self.keys[0]].keys())):
+                        data[self.keys[4]][y] = map(lambda x:zerolog(x),data[self.keys[4]][y])
+                        
+                    # this is supposed to be the last line of our data
+                    EOF = True
+        self.model = data
+        
+        
     def __init__(self, keys):
         self.keys = keys
         self.model = ''
@@ -162,14 +204,19 @@ class Model(object):
 
         # normalizing PI
         self.model['pi'] = np.array(self.model['pi']) / float(len(data))
+        
+        ###forgot about logs!
+        self.model['pi'] =  map(lambda x:zerolog(x),self.model['pi'])
 
-        # normalizing transitions row by row
+        # normalize and logify transitions row by row
         for v in range(Z):
             self.model['transitions'][v] /= np.sum(self.model['transitions'][v])
+            self.model['transitions'][v] = map(lambda x:zerolog(x),self.model['transitions'][v])
 
-        #normalizing emissions row by row
+        #normalize and logify emissions row by row
         for v in range (Z):
             self.model['emissions'][v] /= np.sum(self.model['emissions'][v])
+            self.model['emissions'][v] =  map(lambda x:zerolog(x),self.model['emissions'][v])
 
         
         

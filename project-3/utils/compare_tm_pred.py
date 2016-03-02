@@ -25,6 +25,9 @@ def fasta(f):
     """
     d = {}
     curr_key = ""
+    curr_val = "" #### <-- I ADDED THIS LINE! IF MALFUNCTIONS, CHANGE IT
+    
+    
     lines = [string.strip(l) for l in open(f).readlines() if (l[0] != ';')]
     for l in lines:
         if l == '': continue
