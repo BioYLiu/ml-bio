@@ -276,6 +276,27 @@ class Model(object):
             ### so, why not use our first implementation to do the rest of the work??
         return self.train_by_counting(data)
 
+    
+    def train_by_counting_first_and_last(self, data, number_of_aminoacids=1):
+        # The idea could be define a variable number of aminoacids for 
+        # the extrems of the helice, the default value could be 1, and 
+        # test how it works
+        # modifying the core core could be a little trickier, but not modifying
+        # the extrems shouldn't be hard
+        # And always keeping a core of 1 aminoacid, which can be repeated
+        # so with a input parameter of 5 we would have the same model of the 
+        # slide 20, with a 1 we would have some model with 8 states
+        #
+        
+        #Then we can try training with 1...20 and compare AC's. Sounds a lot better than just trying 5
+        #Agreed. Thats the plan. Gonna go see if they need me in the kitchen
+        
+        # yeah, but maybe we won't have so much improvement, reading what the slides say, but, we will know
+        # because we will test it 
+        #;-) COOl! ;-)
+        # think so :-D
+        #TODO    
+        pass
 
     def hidden_states(self):
         return self.model['hidden'].keys()

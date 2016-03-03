@@ -19,9 +19,9 @@ def load_sequences():
     :return: A dictionary with all the sequences
     """
     sequences_dict = {}
-    for i in range(9):
+    for filename in os.listdir(DATAFOLDER):
         #avoid problems with windows paths
-        path = os.path.join(DATAFOLDER, "set160.%d.labels.txt"%i )
+        path = os.path.join(DATAFOLDER, filename )
         seq_i = sequences_loader.Sequences(path).sequences
         sequences_dict.update(seq_i)
 
@@ -33,9 +33,9 @@ def load_sequences_as_array():
     :return: An array with a dict of sequences in each index
     """
     sequences_array = []
-    for i in range(9):
+    for filename in os.listdir(DATAFOLDER):
         #avoid problems with windows paths
-        path = os.path.join(DATAFOLDER, "set160.%d.labels.txt" % i)
+        path = os.path.join(DATAFOLDER, filename)
         seq_i = sequences_loader.Sequences(path).sequences
         sequences_array.append(seq_i)
 
@@ -60,7 +60,10 @@ def cross_validation(sequences, training_method, decoder):
     Requires the training function
     Requires a decoder objetct (Viterbi or Posterior)
     """
-    total_ac = np.array([.0]*9)
+    # here we store the total_ac for each cross-validation
+    total_ac = np.array([.0] * len(sequences))
+    
+    
     dec = decoder()
 
     for i in range(len(sequences)):
@@ -131,13 +134,13 @@ if __name__ == '__main__':
     cross_validation(sequences, model.train_by_counting_4_states, Viterbi)
 
     ##STEP5###
-    print "Step 5 -> 3"
-    model = hmm.Model(KEYS)
-    cross_validation(sequences, model.train_by_counting, Posterior)
+##    print "Step 5 -> 3"
+##    model = hmm.Model(KEYS)
+##    cross_validation(sequences, model.train_by_counting, Posterior)
 
-    print "Step 5 -> 4"
-    model = hmm.Model(KEYS)
-    cross_validation(sequences, model.train_by_counting_4_states, Posterior)
+##    print "Step 5 -> 4"
+##    model = hmm.Model(KEYS)
+##    cross_validation(sequences, model.train_by_counting_4_states, Posterior)
 
 
     """
