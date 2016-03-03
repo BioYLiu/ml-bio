@@ -84,6 +84,11 @@ def cross_validation(sequences, training_method, decoder):
             true_seq = sequence['Z']
             # the sequence decoded using viterbi, or posterior and the model generated
             pred_seq = dec.decode(model, sequence['X'])
+            print key
+            print "PREDICTED"
+            print pred_seq
+            print "TRUE"
+            print true_seq
             tp, fp, tn, fn = compare_tm_pred.count(true_seq, pred_seq)
 
             total_scores += np.array([tp, fp, tn, fn])
@@ -125,15 +130,16 @@ if __name__ == '__main__':
     print "Step 3"
     model = hmm.Model(KEYS)
     sequences = load_sequences_as_array()
-    cross_validation(sequences, model.train_by_counting, Viterbi)
+##    cross_validation(sequences, model.train_by_counting, Viterbi)
 
 
     ###STEP4###
     print "Step 4"
-    model = hmm.Model(KEYS)
-    cross_validation(sequences, model.train_by_counting_4_states, Viterbi)
+    #Viterbi mean: 0.376966450305, variance: 0.0159377336821
+##    model = hmm.Model(KEYS)
+##    cross_validation(sequences, model.train_by_counting_4_states, Viterbi)
 
-    ##STEP5###
+    ##STEP5##
 ##    print "Step 5 -> 3"
 ##    model = hmm.Model(KEYS)
 ##    cross_validation(sequences, model.train_by_counting, Posterior)
@@ -142,6 +148,12 @@ if __name__ == '__main__':
 ##    model = hmm.Model(KEYS)
 ##    cross_validation(sequences, model.train_by_counting_4_states, Posterior)
 
+    print "Step 6"
+    #Viterbi Mean:0.108049299158  var: 0.0025871160778
+    #posterior mean: -0.319757155104, variance: 0.00340020814633
+    #I must have made a mistake. 
+    model = hmm.Model(KEYS)
+    cross_validation(sequences, model.train_by_counting_first_and_last, Posterior) ###Just a quickndirty test
 
     """
 
