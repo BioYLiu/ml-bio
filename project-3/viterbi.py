@@ -63,8 +63,13 @@ class Viterbi:
                             )
             self.z[n] = hidden_states[np.argmax(indexes)]
             
-            # converts the array of chars to a string
-        self.z = ''.join(self.z)
+        # converts the array of chars to a string
+        # adjustment, now we need to check if we have labels (i.e: iMo instead of M), to generate the correct
+        # output sequence from the
+        if model.get_labels()is not None:
+            self.z = model.translate_hidden_states(self.z)
+        else:
+            self.z = ''.join(self.z)
     
     def decode(self, model, sequence):
 

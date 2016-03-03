@@ -10,10 +10,10 @@ Project 3 TODO
     not correspond immediately to sequences of hidden states, as there are two states that we interpret as being in
     transmembrane helix (annotation M).
 
-*  [ ] 3 Make a 10-fold experiment using the 3-state model, training-by-counting, and Viterbi decoding for prediction.
+*  [X] 3 Make a 10-fold experiment using the 3-state model, training-by-counting, and Viterbi decoding for prediction.
     Show the AC compute by compare_tm_pred.py for each fold, and show the mean and variance of the ACs over all 10 folds.
 
-*  [ ] 4 Redo step 3 with the 4-state model.
+*  [X] 4 Redo step 3 with the 4-state model.
 
 *  [ ] 5 Redo step 3 and 4 using Posterior decoding. How does the results obtained by posterior decoding compare to the
     results obtained by Viterbi decoding?

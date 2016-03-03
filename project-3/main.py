@@ -11,7 +11,7 @@ DATAFOLDER = "Training data"
 
 KEYS = ['hidden', 'observables', 'pi', 'transitions', 'emissions']
 DEBUG = False
-VERBOSE = True
+VERBOSE = False
 
 def load_sequences():
     """
@@ -59,7 +59,7 @@ def cross_validation(sequences, training_method):
     Requieres an array of dict sequences
     Requires the training function
     """
-
+    total_ac = np.array([.0]*9)
     vit = Viterbi()
 
     for i in range(len(sequences)):
@@ -89,15 +89,19 @@ def cross_validation(sequences, training_method):
                 compare_tm_pred.print_stats(tp, fp, tn, fn)
                 print
 
-        print "Summary 10-fold cross validation over index %i :"%(i)
-        compare_tm_pred.print_stats( *total_scores  )
-        print
-        print
-        print
-        print "-------------------------------------------------------"
-        if DEBUG:
-            raw_input("press any key to continue\n")
+        total_ac[i] = compare_tm_pred.compute_stats(*total_scores)[3]
+        #print total_ac
+        if VERBOSE:
+            print "Summary 10-fold cross validation over index %i :"%(i)
+            compare_tm_pred.print_stats( *total_scores  )
+            print
+            print
+            print
+            print "-------------------------------------------------------"
+            if DEBUG:
+                raw_input("press any key to continue\n")
 
+    print "Overall result mean: %s, variance: %s"%(np.mean(total_ac), np.var(total_ac))
 
 if __name__ == '__main__':
 
@@ -114,17 +118,20 @@ if __name__ == '__main__':
 
 
     ###STEP3###
+    print "Step 3"
     model = hmm.Model(KEYS)
     step_3_sequences = load_sequences_as_array()
     cross_validation(step_3_sequences, model.train_by_counting)
 
+
     ###STEP4###
-#    model = hmm.Model(KEYS)
-#    step_4_sequences = load_sequences_as_array()
-#    cross_validation(step_4_sequences, model.train_by_counting_4_states)
+    print "Step 4"
+    model = hmm.Model(KEYS)
+    step_4_sequences = load_sequences_as_array()
+    cross_validation(step_4_sequences, model.train_by_counting_4_states)
 
 
-"""
+    """
 
     ###step3###
     vit = Viterbi()

@@ -57,6 +57,20 @@ def count(true, pred):
 
     return tp, fp, tn, fn
 
+
+def compute_stats(tp, fp, tn, fn):
+    sn = sp = cc = acp = float('Inf')
+    try:
+        sn = float(tp) / (tp + fn)
+        sp = float(tp) / (tp + fp)
+        cc = float((tp*tn - fp*fn)) / math.sqrt(float((tp+fn)*(tn+fp)*(tp+fp)*(tn+fn)))
+        acp = 0.25 * (float(tp)/(tp+fn) + float(tp)/(tp+fp) + float(tn)/(tn+fp) + float(tn)/(tn+fn))
+    except ZeroDivisionError:
+        None
+    ac = (acp - 0.5) * 2
+    return sn, sp, cc, ac
+
+
 def print_stats(tp, fp, tn, fn):
     sn = sp = cc = acp = float('Inf')
     try:

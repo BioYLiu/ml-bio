@@ -59,10 +59,10 @@ class Model(object):
         self.model = data
         
         
-    def __init__(self, keys, base_model=None):
+    def __init__(self, keys, base_model=None, labels=None):
         self.keys = keys
         self.model = base_model or ''
-        
+        self.labels = labels
    
     # I keep it to test the results
     def train_by_counting_old(self, data):
@@ -218,8 +218,14 @@ class Model(object):
             self.model['emissions'][v] /= np.sum(self.model['emissions'][v])
             self.model['emissions'][v] =  map(lambda x:zerolog(x),self.model['emissions'][v])
 
+
+        # if the model has labels, we need to translate back the sequence of Z's
+        if self.labels is not None:
+            for seq in data.values():
+                seq['Z'] = self.translate_hidden_states(seq['Z'])
+
         ## now the function returns a model!!
-        return Model(self.keys, self.model)
+        return Model(self.keys, self.model, self.labels)
 
         
         
@@ -231,6 +237,9 @@ class Model(object):
         :param data: a dict with the sequences
         :return:
         """
+
+        self.labels = dict(i='i', o='o', iMo='M', oMi='M')
+
         for name in data:
             hiddens = list(data[name]['Z'])
             # modifying the hiddens to be 4 instead of 3
@@ -290,6 +299,12 @@ class Model(object):
     def pi(self, a):
         """a is a index of pi"""
         return self.model['pi'][a]
+
+    def get_labels(self):
+        return self.labels
+
+    def translate_hidden_states(self, sequence):
+        return "".join([self.labels[x] for x in sequence])
 
 
 
