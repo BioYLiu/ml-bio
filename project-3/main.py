@@ -53,14 +53,15 @@ def step_2(data):
     return model
 
 
-def cross_validation(sequences, training_method):
+def cross_validation(sequences, training_method, decoder):
     """
-    Performs the 10-fold cross-validatino
+    Performs the 10-fold cross-validation
     Requieres an array of dict sequences
     Requires the training function
+    Requires a decoder objetct (Viterbi or Posterior)
     """
     total_ac = np.array([.0]*9)
-    vit = Viterbi()
+    dec = decoder()
 
     for i in range(len(sequences)):
         total_scores = np.zeros([4])
@@ -78,8 +79,8 @@ def cross_validation(sequences, training_method):
         for key, sequence in validation_data.items():
             # the sequence from the file
             true_seq = sequence['Z']
-            # the secuence decoded using viterbi and the model generated
-            pred_seq = vit.decode(model, sequence['X'])[1]
+            # the sequence decoded using viterbi, or posterior and the model generated
+            pred_seq = dec.decode(model, sequence['X'])
             tp, fp, tn, fn = compare_tm_pred.count(true_seq, pred_seq)
 
             total_scores += np.array([tp, fp, tn, fn])
@@ -121,14 +122,28 @@ if __name__ == '__main__':
     print "Step 3"
     model = hmm.Model(KEYS)
     step_3_sequences = load_sequences_as_array()
-    cross_validation(step_3_sequences, model.train_by_counting)
+    cross_validation(step_3_sequences, model.train_by_counting, Viterbi)
 
 
     ###STEP4###
     print "Step 4"
     model = hmm.Model(KEYS)
     step_4_sequences = load_sequences_as_array()
-    cross_validation(step_4_sequences, model.train_by_counting_4_states)
+    cross_validation(step_4_sequences, model.train_by_counting_4_states, Viterbi)
+
+    ##STEP5###
+    ###STEP3###
+    print "Step 5 -> 3"
+    model = hmm.Model(KEYS)
+    step_3_sequences = load_sequences_as_array()
+    cross_validation(step_3_sequences, model.train_by_counting, Posterior)
+
+
+    ###STEP4###
+    print "Step 5 -> 4"
+    model = hmm.Model(KEYS)
+    step_4_sequences = load_sequences_as_array()
+    cross_validation(step_4_sequences, model.train_by_counting_4_states, Posterior)
 
 
     """

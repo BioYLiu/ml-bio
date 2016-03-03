@@ -92,5 +92,11 @@ class Posterior:
         states = np.array(states)
         self.z = states[ np.argmax(self.alpha + self.beta, axis=0) ]
 
-        self.z = ''.join(self.z)
+        # adjustment, now we need to check if we have labels (i.e: iMo instead of M), to generate the correct
+        # output sequence from the
+        if model.get_labels()is not None:
+            self.z = model.translate_hidden_states(self.z)
+        else:
+            self.z = ''.join(self.z)
+            
         return self.z

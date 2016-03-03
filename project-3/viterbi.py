@@ -71,11 +71,13 @@ class Viterbi:
         else:
             self.z = ''.join(self.z)
     
-    def decode(self, model, sequence):
+    def decode(self, model, sequence, return_only_sequence=True):
 
         self.__w_recursion__(model, sequence)
         self.__bactracking__(model, sequence)
 
+        if return_only_sequence:
+            return self.z
         return ( np.max(self.w, axis=0)[-1], self.z )
         
         
