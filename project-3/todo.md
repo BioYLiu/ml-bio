@@ -15,7 +15,7 @@ Project 3 TODO
 
 *  [X] 4 Redo step 3 with the 4-state model.
 
-*  [ ] 5 Redo step 3 and 4 using Posterior decoding. How does the results obtained by posterior decoding compare to the
+*  [X] 5 Redo step 3 and 4 using Posterior decoding. How does the results obtained by posterior decoding compare to the
     results obtained by Viterbi decoding?
 
 *  [ ] 6 Redo steps 3-5 for any other models that you find relevant, e.g. the ones we talked about in class. What is the
