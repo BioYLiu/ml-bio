@@ -121,26 +121,23 @@ if __name__ == '__main__':
     ###STEP3###
     print "Step 3"
     model = hmm.Model(KEYS)
-    step_3_sequences = load_sequences_as_array()
-    cross_validation(step_3_sequences, model.train_by_counting, Viterbi)
+    sequences = load_sequences_as_array()
+    cross_validation(sequences, model.train_by_counting, Viterbi)
 
 
     ###STEP4###
     print "Step 4"
     model = hmm.Model(KEYS)
-    step_4_sequences = load_sequences_as_array()
-    cross_validation(step_4_sequences, model.train_by_counting_4_states, Viterbi)
+    cross_validation(sequences, model.train_by_counting_4_states, Viterbi)
 
     ##STEP5###
     print "Step 5 -> 3"
     model = hmm.Model(KEYS)
-    step_3_sequences = load_sequences_as_array()
-    cross_validation(step_3_sequences, model.train_by_counting, Posterior)
+    cross_validation(sequences, model.train_by_counting, Posterior)
 
     print "Step 5 -> 4"
     model = hmm.Model(KEYS)
-    step_4_sequences = load_sequences_as_array()
-    cross_validation(step_4_sequences, model.train_by_counting_4_states, Posterior)
+    cross_validation(sequences, model.train_by_counting_4_states, Posterior)
 
 
     """

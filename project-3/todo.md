@@ -51,7 +51,7 @@ Project 3 TODO
 *  [ ] 1 I've added some more functionalities to the model, basically the labels, because as the model now has other
     hidden states and not only i M o, we need to translate the new states to its equivalent, for example, from iMo to M.
 
-*  [ ] 2 Fussines of python. It works mainly with pointers, so when we modified the sequence from 'iiMooo' to ['i','i',
+*  [ ] 2 Fussines of python. It works mainly with references, so when we modified the sequence from 'iiMooo' to ['i','i',
     'iMo'...] to be able to work with more hidden states, we were actually modifying the input sequence, so now we
     have a checker to return the sequence to its original state. It basically checks if there are labels loaded in the
     model
