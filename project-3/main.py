@@ -132,14 +132,11 @@ if __name__ == '__main__':
     cross_validation(step_4_sequences, model.train_by_counting_4_states, Viterbi)
 
     ##STEP5###
-    ###STEP3###
     print "Step 5 -> 3"
     model = hmm.Model(KEYS)
     step_3_sequences = load_sequences_as_array()
     cross_validation(step_3_sequences, model.train_by_counting, Posterior)
 
-
-    ###STEP4###
     print "Step 5 -> 4"
     model = hmm.Model(KEYS)
     step_4_sequences = load_sequences_as_array()
