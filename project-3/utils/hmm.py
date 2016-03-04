@@ -16,85 +16,12 @@ def zerolog(f):
     return math.log(f)
 
 class Model(object):
-
     
-        
-        
     def __init__(self, keys, base_model=None, labels=None):
         self.keys = keys
         self.model = base_model or ''
         self.labels = labels
    
-    # I keep it to test the results
-    def train_by_counting_old(self, data):
-        """
-        Computes training by counting for 3 states i M o
-        :param data: a dictionary of sequences
-        :return:
-        """
-        #Version number indexes instead
-        modelparams = {} ##all parameters: hiddens, obs, pi, trans, emis
-        for i in  range( len(self.keys) ):
-            modelparams[i] = {}
-        
-        for name in data:
-            
-            ##hidden
-            hiddencount = 0
-            for c in data[name]['Z']: #not effecient i know
-                
-                if c not in modelparams[0]:
-                    modelparams[0][c] = hiddencount #hidden
-                    hiddencount+=1
-            
-                
-            ##obs
-            obscount = 0
-            for c in data[name]['X']:
-                
-                if c not in modelparams[1]:
-                    modelparams[1][c] = obscount
-                    obscount+=1
-            
-            
-        ##make last dicts
-        X = len(modelparams[1])
-        Z = len(modelparams[0])
-        modelparams[2] = [0] * Z
-        modelparams[3] = np.zeros(shape=(Z,Z))
-        modelparams[4] = np.zeros(shape=(Z,X)) 
-            
-        for name in data:
-            #count pi
-            ### Fair to assume that pi[1] is 0 probably? As sequence wont begin in membrane
-            modelparams[2][modelparams[0][data[name]['Z'][0]]] += 1
-            
-            
-        
-            
-        for name in data:
-            #count transis
-            for z in range(len(data[name]['X'])-1):
-                f,t = modelparams[0][data[name]['Z'][z]], modelparams[0][data[name]['Z'][z+1]]
-                modelparams[3][f][t] += 1
-                
-                #count emis
-            for z in range(len(data[name]['X'])):
-                h,o =  modelparams[0][data[name]['Z'][z]], modelparams[1][data[name]['X'][z]]  ###Would be cool to do this stuff in a more python way
-                modelparams[4][h][o] += 1
-    
-      
-        a = np.array(modelparams[2])
-        modelparams[2]= a/float(len(data))
-        
-        for v in range(Z):
-            modelparams[3][v]/=np.sum(modelparams[3][v])
-        
-        for v in range (Z):
-            modelparams[4][v] /= np.sum(modelparams[4][v])
-        
-        self.model = modelparams
-
 
     def train_by_counting(self, data):
         """
@@ -189,61 +116,6 @@ class Model(object):
         #print self.model
         return Model(self.keys, self.model, self.labels)
 
-        
-        
-        
-    def train_by_counting_4_states_TEST(self, data):
-        """
-        Computes training by counting with 4 states
-        i, iMo, oMi, o
-        uses self.train_by_counting
-        :param data: a dict with the sequences
-        :return:
-        """
-
-        self.labels = dict(i='i', o='o', l='M', x='M')
-
-        for name in data:
-            hiddens = list(data[name]['Z'])
-            # modifying the hiddens to be 4 instead of 3
-            for x in range(1, len(hiddens)):
-                ## from inside to the membrane
-                if hiddens[x - 1] == 'i' and hiddens[x] =='M':
-                    hiddens[x] = 'l'
-                ## from inside  still in  the membrane
-                elif hiddens[x - 1] == 'l' and hiddens[x] =='M':
-                    hiddens[x] = 'l'
-                ## from outside to the membrane
-                elif hiddens[x - 1] == 'o' and hiddens[x] =='M':
-                    hiddens[x] = 'x'
-                ## from outside still in  the membrane
-                elif hiddens[x - 1] == 'x' and hiddens[x] =='M':
-                    hiddens[x] = 'x'
-                # ok run this. The predictions are really good
-                
-                #ok now look at this change. Im gonna change k to b and n to ... q
-                #Predictions are horrible now
-                #This thing is more than just a placeholder for a char... creepy
-                # what the actual fuck is going on
-                
-                #ill change it back
-                #gonna run it one more time. Yep its back
-                
-                #Something strange is happening to the name of the state.
-                #Maybe it was a bad idea to use my quick-fix-thing.??
-                #I
-                
-                # what
-                # ok, lets do a copy of this method, but with the good results
-
-            # updating the input sequence to match the new states
-        ##    print "".join(data[name]['Z'])
-        ##    print hiddens
-            data[name]['Z'] = hiddens[:]
-            ### At this step  we have each hidden sequences adapted with the new states
-            ### so, why not use our first implementation to do the rest of the work??
-        return self.train_by_counting(data)    
-        
     def train_by_counting_4_states(self, data):
         """
         Computes training by counting with 4 states
