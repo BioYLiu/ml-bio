@@ -95,6 +95,7 @@ class Model(object):
         
         self.model = modelparams
 
+
     def train_by_counting(self, data):
         """
         Computes training by counting for 3 states i M o
@@ -140,7 +141,6 @@ class Model(object):
         self.model['pi'] = [0] * Z
         self.model['transitions'] = np.zeros(shape=(Z,Z))
         self.model['emissions'] = np.zeros(shape=(Z,X))
-
         # let's count!
         for name in data:
             hiddens = np.array(list(data[name]['Z']))
@@ -186,9 +186,63 @@ class Model(object):
                 seq['Z'] = self.translate_hidden_states(seq['Z'])
 
         ## now the function returns a model!!
+        #print self.model
         return Model(self.keys, self.model, self.labels)
 
         
+        
+        
+    def train_by_counting_4_states_TEST(self, data):
+        """
+        Computes training by counting with 4 states
+        i, iMo, oMi, o
+        uses self.train_by_counting
+        :param data: a dict with the sequences
+        :return:
+        """
+
+        self.labels = dict(i='i', o='o', l='M', x='M')
+
+        for name in data:
+            hiddens = list(data[name]['Z'])
+            # modifying the hiddens to be 4 instead of 3
+            for x in range(1, len(hiddens)):
+                ## from inside to the membrane
+                if hiddens[x - 1] == 'i' and hiddens[x] =='M':
+                    hiddens[x] = 'l'
+                ## from inside  still in  the membrane
+                elif hiddens[x - 1] == 'l' and hiddens[x] =='M':
+                    hiddens[x] = 'l'
+                ## from outside to the membrane
+                elif hiddens[x - 1] == 'o' and hiddens[x] =='M':
+                    hiddens[x] = 'x'
+                ## from outside still in  the membrane
+                elif hiddens[x - 1] == 'x' and hiddens[x] =='M':
+                    hiddens[x] = 'x'
+                # ok run this. The predictions are really good
+                
+                #ok now look at this change. Im gonna change k to b and n to ... q
+                #Predictions are horrible now
+                #This thing is more than just a placeholder for a char... creepy
+                # what the actual fuck is going on
+                
+                #ill change it back
+                #gonna run it one more time. Yep its back
+                
+                #Something strange is happening to the name of the state.
+                #Maybe it was a bad idea to use my quick-fix-thing.??
+                #I
+                
+                # what
+                # ok, lets do a copy of this method, but with the good results
+
+            # updating the input sequence to match the new states
+        ##    print "".join(data[name]['Z'])
+        ##    print hiddens
+            data[name]['Z'] = hiddens[:]
+            ### At this step  we have each hidden sequences adapted with the new states
+            ### so, why not use our first implementation to do the rest of the work??
+        return self.train_by_counting(data)    
         
     def train_by_counting_4_states(self, data):
         """
@@ -218,7 +272,7 @@ class Model(object):
                 elif hiddens[x - 1] == 'oMi' and hiddens[x] =='M':
                     hiddens[x] = 'oMi'
 
-                """
+                
                 ##### Already checked, nothing wrong, uncomment to check again
                 ## from the oMi to outside shouldn't be possible
                 ## just checking
@@ -229,9 +283,11 @@ class Model(object):
                 ## just checking
                 elif hiddens[x - 1] == 'iMo' and hiddens[x] =='i':
                     print "from iMo to inside"
-                """
+                
 
             # updating the input sequence to match the new states
+    ##        print "".join(data[name]['Z'])
+    ##        print hiddens
             data[name]['Z'] = hiddens[:]
             ### At this step  we have each hidden sequences adapted with the new states
             ### so, why not use our first implementation to do the rest of the work??
@@ -258,10 +314,6 @@ class Model(object):
         # think so :-D
         #TODO
         
-        
-        
-        
-        
         self.labels = dict(i='i', o='o',
             iMo = 'M',   oMi = 'M',
             i1o = 'M',   o1i = 'M',
@@ -279,7 +331,6 @@ class Model(object):
         
         
         for name in data:
-            
             hiddens = list(data[name]['Z'])
             for x in range(1, len(hiddens)): #forward pass
                 ## from inside to the membrane
@@ -297,8 +348,8 @@ class Model(object):
                     hiddens[x] = 'iMo'
                 elif hiddens[x - 1] == 'iMo' and hiddens[x] =='M': ##if in core just stay there
                     hiddens[x] = 'iMo'
-                
-                    
+
+
                 ## from outside to the membrane
                 elif hiddens[x - 1] == 'o' and hiddens[x] =='M':
                     hiddens[x] = 'o1i'
@@ -314,8 +365,8 @@ class Model(object):
                     hiddens[x] = 'oMi'
                 elif hiddens[x - 1] == 'oMi' and hiddens[x] =='M':
                     hiddens[x] = 'oMi'
-                    
-                    
+
+
             for x in range(len(hiddens)-2, -1, -1): #backward pass
                 if hiddens[x + 1] == 'i' and hiddens[x] =='oMi': #It should be oMi now because of the forward pass
                     hiddens[x] = 'o10i'
@@ -339,25 +390,78 @@ class Model(object):
                     hiddens[x] = 'i6o'
 
             # print below to see translation to states
-        ##    print data[name]['Z']
-        ##    print hiddens[:]
+            #print data[name]['Z']
+            #print hiddens[:]
             data[name]['Z'] = hiddens[:]
+            
+        return self.train_by_counting(data) 
+
+
+    def train_by_lol_model(self, data):
+
+        # i i i i M M M M M o o o o o M M M M M  i  i
+        # 0 0 0 1 2 3 3 3 4 5 6 6 6 7 8 9 9 9 10 11 11
+        self.labels = { '0': 'i', '1': 'i', '2': 'M', '3': 'M', '4': 'M', '5': 'o', '6': 'o',
+            '7': 'o', '8': 'M', '9': 'M', '10': 'M', '11': 'i' }
+
+        for name in data.keys():
+            hiddens = list(data[name]['Z'])
+            if hiddens[0] == 'i':
+                hiddens[0] = '0'
+            elif hiddens[0] == 'o':
+                hiddens[0] = '6'
+
+            for x in range(1,  len(hiddens)):
+                if hiddens[x - 1] == '0':     # it was center i
+                    if hiddens[x] == 'i':   # now is i
+                        hiddens[x] = '0'      # so still center i
+                    elif hiddens[x] == 'M': # now is M
+                        hiddens[x - 1] = '1'  # so change previous to end i
+                        hiddens[x] = '2'      # so now is init M
+                elif hiddens[x - 1] == '2':   # it was init M
+                    if hiddens[x] == 'M':   # still M
+                        hiddens[x] = '3'      # now is center M
+                elif hiddens[x - 1] == '3':   # it was center M
+                    if hiddens[x] == 'M':   # still M
+                        hiddens[x] = '3'      # so it is center M
+                    elif hiddens[x] == 'o': # now it is o
+                        hiddens[x - 1] = '4'  # so previous was end M
+                        hiddens[x] = '5'      # and now it is init o
+                elif hiddens[x - 1] == '5':   # it was init o
+                    if hiddens[x] == 'o':   # still o
+                        hiddens[x] = '6'      # now is center o
+                elif hiddens[x - 1] == '6':   # it was center o
+                    if hiddens[x] == 'o':   # still o
+                         hiddens[x] = '6'     # so still center o
+                    elif hiddens[x] == 'M': # now it is M
+                        hiddens[x - 1] = '7'  # so change previous center o to end o
+                        hiddens[x] = '8'      # so change current to init M
+                elif hiddens[x - 1] == '8':   # it was init M
+                    if hiddens[x] == 'M':   # still M
+                        hiddens[x] = '9'      # so center M
+                elif hiddens[x - 1] == '9':   # it was center M
+                    if hiddens[x] == 'M':   # still M
+                         hiddens[x] = '9'     # so center M
+                    elif hiddens[x] == 'i': # now it is i
+                        hiddens[x - 1] = '10' # so previous was end M
+                        hiddens[x] = '11'     # and now it is init i
+                elif hiddens[x - 1] == '11':    # it was init i
+                    if hiddens[x] == 'i':   # still ti is i
+                        hiddens[x] = '0'      # now is center i
+                else:
+                    ## doesn't fit the model
+                    del data[name]
+                    break
+
+
+            if name in data:
+                data[name]['Z'] = hiddens[:]
             
         return self.train_by_counting(data)
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        pass
-
     def hidden_states(self):
-        return self.model['hidden'].keys()
+        # here we had self.model['hidden'].keys()
+        return sorted(self.model['hidden'], key=self.model['hidden'].get)
 
     def emission(self, a, b):
         """a is an index of a hidden state, b is an index of an emission"""

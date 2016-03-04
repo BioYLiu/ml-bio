@@ -84,11 +84,13 @@ def cross_validation(sequences, training_method, decoder):
             true_seq = sequence['Z']
             # the sequence decoded using viterbi, or posterior and the model generated
             pred_seq = dec.decode(model, sequence['X'])
+            """
             print key
             print "PREDICTED"
             print pred_seq
             print "TRUE"
             print true_seq
+            """
             tp, fp, tn, fn = compare_tm_pred.count(true_seq, pred_seq)
 
             total_scores += np.array([tp, fp, tn, fn])
@@ -125,35 +127,60 @@ if __name__ == '__main__':
 ##    step_2_sequences = load_sequences()
 ##    step_2_model = step_2(step_2_sequences)
 
-
+    sequences = load_sequences_as_array()
+    
     ###STEP3###
-    print "Step 3"
+    print "Step 3 - Train by counting with Viterbi"
+    #Viterbi  mean: 0.676441765877, variance: 0.00434450326705
     model = hmm.Model(KEYS)
     sequences = load_sequences_as_array()
-##    cross_validation(sequences, model.train_by_counting, Viterbi)
+    #Viterbi  mean: 0.676441765877, variance: 0.00434450326705
+    cross_validation(sequences, model.train_by_counting, Viterbi)
 
 
     ###STEP4###
-    print "Step 4"
-    #Viterbi mean: 0.376966450305, variance: 0.0159377336821
-##    model = hmm.Model(KEYS)
-##    cross_validation(sequences, model.train_by_counting_4_states, Viterbi)
+    print "Step 4 - Train by counting 4 states with Viterbi"
+    #Viterbi mean: 0.680680926674, variance: 0.00483538599374
+    model = hmm.Model(KEYS)
+    cross_validation(sequences, model.train_by_counting_4_states, Viterbi)
 
     ##STEP5##
-##    print "Step 5 -> 3"
-##    model = hmm.Model(KEYS)
-##    cross_validation(sequences, model.train_by_counting, Posterior)
-
-##    print "Step 5 -> 4"
-##    model = hmm.Model(KEYS)
-##    cross_validation(sequences, model.train_by_counting_4_states, Posterior)
-
-    print "Step 6"
-    #Viterbi Mean:0.108049299158  var: 0.0025871160778
-    #posterior mean: -0.319757155104, variance: 0.00340020814633
-    #I must have made a mistake. 
+    print "Step 5.3 - Train by counting with Posterior"
+    #post     mean: 0.787618369207, variance: 0.00128948356058
     model = hmm.Model(KEYS)
-    cross_validation(sequences, model.train_by_counting_first_and_last, Posterior) ###Just a quickndirty test
+    cross_validation(sequences, model.train_by_counting, Posterior)
+
+    print "Step 5.4 - Train by counting four states with Posterior"
+    #post    mean: 0.780762655675, variance: 0.0018264024132
+    model = hmm.Model(KEYS)
+    cross_validation(sequences, model.train_by_counting_4_states, Posterior)
+
+    print "Step 6.1 - Train by counting 24 states with Viterbi"
+    #Viterbi, 24-states mean: 0.726542923523, variance: 0.00365988474218
+    model = hmm.Model(KEYS)
+    cross_validation(sequences, model.train_by_counting_first_and_last, Viterbi) 
+    
+    print "Step 6.2 - Train by counting 24 states with Posterior"
+    #Viterbi, 24-states mean: 0.726542923523, variance: 0.00365988474218
+    model = hmm.Model(KEYS)
+    cross_validation(sequences, model.train_by_counting_first_and_last, Posterior) 
+    """
+    ### lol model, sounds better
+    # i i i i M M M M M o o o o o M M M M M  i  i i
+    # 0 0 0 1 2 3 3 3 4 5 6 6 6 7 8 9 9 9 10 11 0 0
+    """
+    print "Step 6.3 - Train by counting  lol_model with Viterbi" 
+    #Viterbi, 24-states mean: 0.726542923523, variance: 0.00365988474218
+    model = hmm.Model(KEYS)
+    cross_validation(sequences, model.train_by_lol_model, Viterbi) 
+
+    print "Step 6.4 - Train by counting  lol_model with Posterior" 
+    #Viterbi, 24-states mean: 0.726542923523, variance: 0.00365988474218
+    model = hmm.Model(KEYS)
+    cross_validation(sequences, model.train_by_lol_model, Posterior) 
+    
+    
+    
 
     """
 
