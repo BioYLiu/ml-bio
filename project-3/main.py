@@ -9,6 +9,7 @@ from posterior import Posterior
 import numpy as np
 from utils import compare_tm_pred
 import sys
+from utils import hmm_viterbi
 
 DATAFOLDER = "Training data"
 
@@ -159,7 +160,6 @@ def cross_validation_new(sequences, training_method, hmm, **kwargs):
         validation_data = merge(validation_data_array)
         # the training function returns a model
         mxacids = kwargs.get("mx_aminoacids")
-        ##if (training_method.__name__ == "mx"): woops, name is always "train"
         if (mxacids != None):
             model = training_method(hmm, training_data, kwargs.get("mx_aminoacids"))
         else:
@@ -175,12 +175,11 @@ def cross_validation_new(sequences, training_method, hmm, **kwargs):
             """
             print key
             print "PREDICTED"
-            print pred_seq
+            print vit_pred_seq
             print "TRUE"
             print true_seq
             """
             tp, fp, tn, fn = compare_tm_pred.count(true_seq, vit_pred_seq)
-
             vit_total_scores += np.array([tp, fp, tn, fn])
             tp, fp, tn, fn = compare_tm_pred.count(true_seq, post_pred_seq)
             post_total_scores += np.array([tp, fp, tn, fn])
@@ -228,7 +227,7 @@ if __name__ == '__main__':
 
 #####   TEST EVERYTHING ####
 
-
+    """
     model = hmm.Model(KEYS)
     sequences = load_sequences_as_array()
 
@@ -256,7 +255,7 @@ if __name__ == '__main__':
 
 
 
-
+    """
    
     """     TEST RESULTS Training by counting
     
@@ -302,96 +301,19 @@ if __name__ == '__main__':
             Overall result mean: 0.789227688282, variance: 0.00157365490291
             
     """
-    
-    """ TEST RESULTS VITERBI TRAINING, 10 rounds
-    
-    viterbi
-    0.898607423232  0.0174455500268
-    posterior
-    0.839138398185  0.00841011931923
-    
-    """
-    
-    
-    
-    
-    
-    ## how to make it take just the model and not the "train" method?
-    ## Things I wish we had time for
-    ## Do 8, 12, 16 and 20 states.
-    ## Do more with lol model or whatever seems more promising
-    ## Do ALL of above with viterbi training (will take longer so try to make sure we only do it once)
-    ## Viterbi training should be an easy and big improvement from training by counting
-    ## Make cool plot
-    
-    
-    """
-    ###step3###
-    vit = Viterbi()
-    scores = [0] * 10
-    results = [None] * 10 #use this instead to output in fasta afterwards
-    for i in range(10):
-        step3data_train = {} ##reset data each time. If there is a way to update the old one it is likely bettter
-        step3data_validate = {}
-        step3data_validate = sequences_loader.Sequences(os.path.join(DATAFOLDER, "set160.%d.labels.txt"%i))
-        
-        #train on all other than i
-        for j in range(10):
-            if (j!=i):
-                path = os.path.join(DATAFOLDER, "set160.%d.labels.txt"%j ) 
-                seq = sequences_loader.Sequences(path).sequences
-                step3data_train.update(seq)
-                
-        model.train_by_counting(step3data_train)
-        
-        
-        #do viterbi prediction on set i
-        for key, sequence in step3data_validate.get().items():
-            ##                                true annotation         prediction
-            scores[i] = compare_tm_pred.count(sequence['Z'],vit.decode(model, sequence['X'])[1])
-        
-        
-        ##output results
-        
-        print "%d: %s"%(i, scores[i])
-        compare_tm_pred.print_stats( *scores[i]  )
-        
-        
-        ##bad score and it prints really weird sequences. I think maybe its supposed to be bad (its much better when you load the model from hmm-tm.txt from last week)
-    
-   ##need to either output to fasta to read in compare_tm, or just average over the things ^^^^
-    ##I can do it but I want to be python-like.. 
-    #look at the stats. Sequence 2 has no M predictions?
-    
-    
-    # load methods
-   # vit = Viterbi()
-    #post = Posterior()
+    sequences = load_sequences()
+    viterbi_model  = hmm_viterbi.Model(KEYS)
+    viterbi_model.load('initial_model.txt')
+    print viterbi_model
+    print "training"
+    viterbi_model.train(sequences, 10)
     
 
+    
+    
 
-    # viterbi
-    probs = {}
-    for key, sequence in sequences.get().items():
-        probs[key] = vit.decode(model, sequence)
-
-    outputs.to_project_2_viterbi(sequences.get(), probs, 'pred-test-sequences-project2-viterbi.txt')
-
-    probs = {}
-    for key, value in sequences.get().items():
-        sequence = {
-            'Z': post.decode(model, value),
-            'X': value
-        }
-        log_joint = compute_hmm(model, sequence)
-
-        probs[key] = ( log_joint, sequence['Z'])
-
-    #outputs.to_project_2_posterior(sequences.get(), probs, 'posterior-output.txt')
-    #outputs.to_project_2_posterior(sequences.get(), probs, 'pred-test-sequences-project2-posterior.txt')
-    # testing
-    #probs = { key: value[1] for key, value in probs.items() }
-    #outputs.to_project_1_sequences_file_from_posterior_decoding(sequences.get(), probs, 'posterior-decoding-sequences.txt')
-    """
+    
+    
+    
     
     

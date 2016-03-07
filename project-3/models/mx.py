@@ -183,18 +183,21 @@ def train(hmm, data, number_of_aminoacids):
         data[name]['Z'] = hiddens[:]
         
     return hmm.train_by_counting(data) 
-    
+"""    
 def viterbitrain(hmm, datainp, number_of_aminoacids):
     iterations = 4
     data = datainp #make a copy?
     vit = Viterbi()
     curr_model = None
     for i in range(iterations): #other stopping criterion could be better
-        print i
         curr_model = train(hmm, data, number_of_aminoacids)
         for name in data:
             data[name]['Z'] = vit.decode(curr_model, data[name]['X'])
     
     return curr_model
+"""
+def viterbitrain(hmm, data, number_of_aminoacids):
+    iterations = 4
+    vit=Viterbi()
     
     

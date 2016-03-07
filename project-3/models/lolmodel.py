@@ -64,14 +64,3 @@ def train(hmm, data):
     
     
 
-def viterbitrain(hmm, datainp):
-    iterations = 10
-    data = datainp #make a copy?
-    vit = Viterbi()
-    curr_model = None
-    for i in range(iterations + 1): #other stopping criterion could be better
-        curr_model = train(hmm, data)
-        for name in data:
-            data[name]['Z'] = vit.decode(curr_model, data[name]['X'])
-    
-    return curr_model

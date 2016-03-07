@@ -1,0 +1,18 @@
+#
+# initial model for viterbi training with 3 states
+#
+
+hidden
+i M o
+
+observables
+A C E D G F I H K M L N Q P S R T W V Y
+
+pi
+1 0 3
+
+transitions
+2 1 0
+1 2 1.1
+0 1.1 1.7
+
